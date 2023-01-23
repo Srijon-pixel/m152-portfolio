@@ -28,7 +28,11 @@ Détail : Aucune utilité pour l'instant
 
 
 </header>
-<main></main>
+<main>
+<form method="post">
+     
+</form>
+</main>
 <footer></footer>
 </body>
 </html>
