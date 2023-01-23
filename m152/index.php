@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-
+<!--
+Projet : Créer un portfolio
+Auteur : Srijon Rahman
+Date : 23.01.23
+Détail : Page d'accueil du site
+-->
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -25,14 +30,15 @@
                 </ul>
             </div>
         </nav>
+    <h1>Bienvenu sur mon portfolio</h1>
+
     </header>
     <main>
 <div class="card">
     <img src="./img/photo_profil.jpg" alt="photo">
     <div class="container">
-    <p>Bienvenu sur mon portfolio</p>
     <p>Nom : Srijon Rahman</p>
-    <p>Passion : jouer au jeux vidéo</p>
+    <p>Passion : Jouer aux jeux vidéos</p>
     </div>
 </div>
 
