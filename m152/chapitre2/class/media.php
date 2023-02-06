@@ -12,12 +12,13 @@ class EMedia
      * @param string $InNom le nom du budget
      * @param integer $InMontant le montant du budget
      */
-    public function __construct($InIdMedia, $InNomFichierMedia = "", $InTypeMedia = "")
+    public function __construct($InIdMedia, $InNomFichierMedia = "", $InTypeMedia = "", $InImage = "")
     {
 
         $this->idMedia = $InIdMedia;
         $this->nomFichierMedia = $InNomFichierMedia;
         $this->typeMedia = $InTypeMedia;
+        $this->image = $InImage
     }
 
 
@@ -34,4 +35,8 @@ class EMedia
      * @var string type du fichier contenant le média
      */
     public $typeMedia;
+    /**
+     * @var string l'image encodé en base 64
+     */
+    public $image
 }

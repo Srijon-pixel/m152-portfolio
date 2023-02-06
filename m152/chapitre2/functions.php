@@ -8,7 +8,7 @@
  */
 require_once './db/database.php';
 require_once './class/media.php';
-require_once './class/poste.php';
+require_once './class/post.php';
 
 
 
@@ -43,7 +43,7 @@ function getAllPosts()
     $arr = array();
 
     $sql = "SELECT * FROM `portfolio_img`.`post` 
-	JOIN `media` USING(idP)
+	JOIN `media` USING(idPost)
 	JOIN `type` USING(idType)";
     $statement = EDatabase::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
     try {
@@ -114,3 +114,73 @@ function deletePost($idPost)
     // Fini
     return true;
 }
+
+/**
+ * Sauvegarder une image pour un utilisateur donné sous forme de encodée 64bits
+ *
+ * @param string $InEmail 	L'email de l'utilisateur pour lequel on veut récupérer les images. 
+ * @param binary $InContent Le contenu du fichier à sauvegarder
+ * @param string $InMimeType Le type mime du fichier à sauvegarder
+ * @param string $InOriginalFilename Le nom original du fichier
+ * @return bool True si correctement sauvegardé, autrement False si une erreur est survenue
+ * 
+ * @remark Les images sont stockées directement dans un enregistrement de la base de données sous forme encodée 64bits
+ */
+function SaveUserEnc64Image($, $InMimeType, $InOriginalFilename){
+    // Insérer le contenu directement dans l'enregistrement de la base de données
+    $sql = "INSERT INTO `portfolio_img`.`media` (`nomFichierMedia`,`typeMedia`,`encodeImage`) VALUES(:n, :t, :e)";
+    $statement = EDatabase::prepare($sql);
+    // Préparer la chaîne qui permet d'afficher directement l'image dans un tag img
+    $SrcEnc64 = 'data:'.$InMimeType.';base64,'.base64_encode($InImage);
+
+    try {
+        $statement->execute(array(':c' => $SrcEnc64, ':o' => $InOriginalFilename, ':e' => $InEmail));
+    }
+    catch (PDOException $e) {
+        echo 'Problème écriture dans la base de données: '.$e->getMessage();
+        // fail
+        return false;
+    }
+    // Done
+    return true;
+}
+   
+               
+ /**
+ * Récupère toutes les images de l'utilisateur 
+ * @param string $InEmail L'email de l'utilisateur pour lequel on veut récupérer les images. 
+ * @return array Un tableau d'objet EBlobImage. False si une erreur est survenue
+ * 
+ * @remark Les images sont stockées directement dans un enregistrement de la base de données sous forme encodée 64bits
+ */
+function LoadUserEnc64Images($InEmail)
+{
+	// On crée un tableau qui va contenir les objets EEncImage
+	$arr = array();
+
+    $s = "SELECT `base64_images`.`ID`, `base64_images`.`ENCODEDIMAGE`, `base64_images`.`ORIGINALFILENAME`, `base64_images`.`USERS_EMAIL` FROM `cfpt_images`.`base64_images` WHERE `base64_images`.`USERS_EMAIL` = :e";
+	$statement = EDatabase::prepare($s,array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+	try {
+		$statement->execute(array(':e' => $InEmail));
+	}
+	catch (PDOException $e) {
+        echo 'Problème de lecture de la base de données: '.$e->getMessage();
+		return false;
+	}
+	// On parcoure les enregistrements 
+	while ($row=$statement->fetch(PDO::FETCH_ASSOC,PDO::FETCH_ORI_NEXT)){
+		// On crée l'objet EEncImage en l'initialisant avec les données provenant
+		// de la base de données
+		$img = new EEncImage($InEmail, 
+        $row['ENCODEDIMAGE'], 
+        $row['ORIGINALFILENAME'], 
+        intval($row['ID']));
+		// On place l'objet EEncImage créé dans le tableau
+		array_push($arr, $img);
+	}        
+	// On retourne le tableau contenant la définition des images sous forme EEncImage
+	return $arr;
+}     
+
+
+     

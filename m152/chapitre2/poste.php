@@ -28,10 +28,10 @@ Détail : Va ajouter les postes de l'utilisateur dans la page home. Le poste con
 
     $colImg = "";
     $colDescription = "";
-    
-    //Test si les données des champs seront dans la BD ou pas
-    if (isset($_POST['add'])) {
 
+    //Test si les données des champs seront dans la BD ou pas
+    if (isset($_POST['poster'])) {
+        $dateCreation = date("Y-m-d");
         $img = filter_input(INPUT_POST, 'img');
         if ($img == false) {
             $colImg = COL_ERROR;
@@ -42,8 +42,17 @@ Détail : Va ajouter les postes de l'utilisateur dans la page home. Le poste con
             $colDescription = COL_ERROR;
         }
 
+        if (!isset($_FILES['userfile']) || !is_uploaded_file($_FILES['userfile']['tmp_name'])) {
+            echo ('Problème de transfert');
+            exit;
+        }
+        if (!SaveUserEnc64Image($email, file_get_contents($_FILES['userfile']['tmp_name']), $_FILES['userfile']['type'], $_FILES['userfile']['name'])) {
+            echo ('Problème pour insérer une image dans la base');
+            exit;
+        }
+
         if ($colDescription != COL_ERROR && $colImg != COL_ERROR) {
-            if (addPost($description, $dateCreation = date("Y-m-d"), $img)) {
+            if (addPost($description, $dateCreation, $img)) {
                 echo '<script>alert("Le poste a été ajouté")</script>';
             }
         } else {
@@ -65,11 +74,26 @@ Détail : Va ajouter les postes de l'utilisateur dans la page home. Le poste con
 
     </header>
     <main>
-        <form method="post">
-            <input type="file" id="img" name="img" accept="image/*"> <br>
-            <textarea name="description" id="" cols="40" rows="2"></textarea><br>
-            <input type="submit" name="add" value="Ajouter le poste" class="btn btn-primary">
-        </form>
+        <input type="hidden" name="MAX_FILE_SIZE" value="300000">
+        <label for="imgPost">Images</label>
+        <input type="file" name="imgPost" id="imgPost"> <br>
+        <textarea name="description" id="description" cols="30" rows="10"></textarea>
+        <input type="submit" name="poster" value="Poster">
+        <?php
+
+        // On va afficher après le formulaire les images de l'utilisateur
+        $imgs = LoadUserEnc64Images($email);
+        foreach ($imgs as $img) {
+            echo '';
+            echo $img->OriginalFilename;
+            echo '';
+            // On affiche directement dans l’attribut src d’un tag 
+            echo '';
+            echo '';
+        }
+
+
+        ?>
     </main>
     <footer></footer>
 </body>
