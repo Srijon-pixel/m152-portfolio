@@ -25,6 +25,7 @@ Détail : Va ajouter les postes de l'utilisateur dans la page home. Le poste con
 
     $img = "";
     $description = "";
+    
 
     $colImg = "";
     $colDescription = "";
@@ -81,11 +82,12 @@ Détail : Va ajouter les postes de l'utilisateur dans la page home. Le poste con
         <input type="submit" name="poster" value="Poster">
         <?php
 
+
         // On va afficher après le formulaire les images de l'utilisateur
-        $imgs = LoadUserEnc64Images($email);
+        $imgs = LoadUserEnc64Images();
         foreach ($imgs as $img) {
             echo '';
-            echo $img->OriginalFilename;
+            echo $img->nomFichierMedia;
             echo '';
             // On affiche directement dans l’attribut src d’un tag 
             echo '';
