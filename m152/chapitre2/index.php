@@ -46,7 +46,16 @@ Détail : Page d'accueil du site
                 <p>Passion : Jouer aux jeux vidéo</p>
             </div>
         </div>
+        <?php // On va afficher après le formulaire les images de l'utilisateur
+        $imgs = LoadUserEnc64Images();
+        foreach ($imgs as $img) {
+            echo '<img src="'.$img->encodeImage.'">';
 
+            // On affiche directement dans l’attribut src d’un tag 
+            echo '';
+            echo '';
+        }
+        ?>
     </main>
     <footer></footer>
 

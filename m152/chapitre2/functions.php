@@ -42,7 +42,8 @@ function getAllPosts()
 {
     $arr = array();
 
-    $sql = "SELECT * FROM `portfolio_img`.`post` 
+    $sql = "SELECT `post`.`idPost`, `post`.`description`, `post`.`dateCreation`, `post`.`idMedia`
+    FROM `portfolio_img`.`post`
 	JOIN `media` USING(idPost)
 	JOIN `type` USING(idType)";
     $statement = EDatabase::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
@@ -83,13 +84,13 @@ function addPost($description, $dateCreation)
 	VALUES(:d,:dm)";
     //$sqlMedia = "INSERT INTO `portfolio_img`.`media` (`idPost`,`idMedia`) VALUES(:ip,:m)";
     $statement = EDatabase::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
-	//$statMedia = EDatabase::prepare($sqlMedia, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+    //$statMedia = EDatabase::prepare($sqlMedia, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 
     try {
         $statement->execute(array(
             ":d" => $description, ":dm" => $dateCreation
         ));
-       //$statMedia->execute(array(":ip" => $idPost, ":m" => $idMedia));
+        //$statMedia->execute(array(":ip" => $idPost, ":m" => $idMedia));
     } catch (PDOException $e) {
         return false;
     }
@@ -124,27 +125,27 @@ function deletePost($idPost)
  * 
  * @remark Les images sont stockées directement dans un enregistrement de la base de données sous forme encodée 64bits
  */
-function SaveUserEnc64Image($nomFichierMedia, $image , $InMimeType){
+function SaveUserEnc64Image($nomFichierMedia, $image, $InMimeType)
+{
     // Insérer le contenu directement dans l'enregistrement de la base de données
     $sql = "INSERT INTO `portfolio_img`.`media` (`nomFichierMedia`,`encodeImage`) VALUES(:n, :e)";
     $statement = EDatabase::prepare($sql);
     // Préparer la chaîne qui permet d'afficher directement l'image dans un tag img
-    $SrcEnc64 = 'data:'.$InMimeType.';base64,'.base64_encode($image);
+    $SrcEnc64 = 'data:' . $InMimeType . ';base64,' . base64_encode($image);
 
     try {
         $statement->execute(array(':n' => $nomFichierMedia, ':e' => $SrcEnc64));
-    }
-    catch (PDOException $e) {
-        echo 'Problème écriture dans la base de données: '.$e->getMessage();
+    } catch (PDOException $e) {
+        echo 'Problème écriture dans la base de données: ' . $e->getMessage();
         // fail
         return false;
     }
     // Done
     return true;
 }
-   
-               
- /**
+
+
+/**
  * Récupère toutes les images de l'utilisateur de la base de données
  * @return array Un tableau d'objet EMedia. False si une erreur est survenue
  * 
@@ -152,33 +153,29 @@ function SaveUserEnc64Image($nomFichierMedia, $image , $InMimeType){
  */
 function LoadUserEnc64Images()
 {
-	// On crée un tableau qui va contenir les objets EMedia
-	$arr = array();
+    // On crée un tableau qui va contenir les objets EMedia
+    $arr = array();
 
-    $s = "SELECT * FROM `portfolio_img`.`media`";
-	$statement = EDatabase::prepare($s,array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
-	try {
-		$statement->execute();
-	}
-	catch (PDOException $e) {
-        echo 'Problème de lecture de la base de données: '.$e->getMessage();
-		return false;
-	}
-	// On parcoure les enregistrements 
-	while ($row=$statement->fetch(PDO::FETCH_ASSOC,PDO::FETCH_ORI_NEXT)){
-		// On crée l'objet EMedia en l'initialisant avec les données provenant
-		// de la base de données
+    $s = "SELECT  `media`.`idMedia`, `media`.`nomFichierMedia`, `media`.`encodeImage` FROM `portfolio_img`.`media` ";
+    $statement = EDatabase::prepare($s, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+    try {
+        $statement->execute();
+    } catch (PDOException $e) {
+        echo 'Problème de lecture de la base de données: ' . $e->getMessage();
+        return false;
+    }
+    // On parcoure les enregistrements 
+    while ($row = $statement->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) {
+        // On crée l'objet EMedia en l'initialisant avec les données provenant
+        // de la base de données
         $img = new EMedia(
             intval($row['idMedia']),
             $row['nomFichierMedia'],
             $row['encodeImage']
         );
-		// On place l'objet EMedia créé dans le tableau
-		array_push($arr, $img);
-	}        
-	// On retourne le tableau contenant la définition des images sous forme EMedia
-	return $arr;
-}     
-
-
-     
+        // On place l'objet EMedia créé dans le tableau
+        array_push($arr, $img);
+    }
+    // On retourne le tableau contenant la définition des images sous forme EMedia
+    return $arr;
+}

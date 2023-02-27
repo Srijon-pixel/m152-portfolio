@@ -19,4 +19,4 @@ define('EDB_DBNAME', "portfolio_img");
 define('EDB_HOST', "127.0.0.1");
 define('EDB_PORT', "3306");
 define('EDB_USER', "Srijon");
-define('EDB_PASS', "portfolio2");
+define('EDB_PASS', "pokemon$7");

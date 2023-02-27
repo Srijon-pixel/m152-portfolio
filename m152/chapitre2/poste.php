@@ -4,14 +4,13 @@
 Projet : Créer un portfolio
 Auteur : Srijon Rahman
 Date : 23.01.23
-Détail : Va ajouter les postes de l'utilisateur dans la page home. Le poste contiendra une image et une description
+Détail : Va ajouter les postes de l'utilisateur qui seront affichés dans la page home. Le poste contiendra une image et une description
 -->
 
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./css/base.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
     <title>Post</title>
 </head>
@@ -23,9 +22,9 @@ Détail : Va ajouter les postes de l'utilisateur dans la page home. Le poste con
 
     const COL_ERROR = "red";
 
-    $img = "";
+    $img = array();
     $description = "";
-    
+
 
     $colImg = "";
     $colDescription = "";
@@ -33,28 +32,47 @@ Détail : Va ajouter les postes de l'utilisateur dans la page home. Le poste con
     //Test si les données des champs seront dans la BD ou pas
     if (isset($_POST['poster'])) {
         $dateCreation = date("Y-m-d");
-        $img = filter_input(INPUT_POST, 'img');
-        if ($img == false) {
-            $colImg = COL_ERROR;
-        }
 
         $description = filter_input(INPUT_POST, 'description');
         if ($description == false) {
             $colDescription = COL_ERROR;
         }
 
-        if (!isset($_FILES['userfile']) || !is_uploaded_file($_FILES['userfile']['tmp_name'])) {
+        /* $total = count($_FILES['imgPost']['name']);
+        for ($i = 0; $i < $total; $i++) {
+
+            //Récupère le chemin du fichier
+            $tmpFilePath = $_FILES['imgPost']['tmp_name'][$i];
+
+            //Vérifie si on un chemin
+            if ($tmpFilePath != "") {
+                //Remplace le chemin par le nouveau
+                $newFilePath = "./img/" . $_FILES['imgPost']['name'][$i];
+
+                //Envoie le fichier dans un dossier temporaire
+                if (move_uploaded_file($tmpFilePath, $newFilePath)) {
+*/
+        if (isset($_FILES['imgPost']) && is_uploaded_file($_FILES['imgPost']['tmp_name'])) {
+            if (!SaveUserEnc64Image($_FILES['imgPost']['name'], file_get_contents($_FILES['imgPost']['tmp_name']), $_FILES['imgPost']['type'])) {
+                echo ('Problème pour insérer une image dans la base');
+                $colImg = COL_ERROR;
+            }
+        } else {
             echo ('Problème de transfert');
-            exit;
-        }
-        if (!SaveUserEnc64Image($email, file_get_contents($_FILES['userfile']['tmp_name']), $_FILES['userfile']['type'], $_FILES['userfile']['name'])) {
-            echo ('Problème pour insérer une image dans la base');
-            exit;
+            $colImg = COL_ERROR;
         }
 
+        /*}
+            }
+        }*/
+
+
+
+
         if ($colDescription != COL_ERROR && $colImg != COL_ERROR) {
-            if (addPost($description, $dateCreation, $img)) {
-                echo '<script>alert("Le poste a été ajouté")</script>';
+            if (addPost($description, $dateCreation)) {
+                header('Location: index.php');
+                exit;
             }
         } else {
             echo '<script>alert("Pas possible il vous manque des valeurs ou des valeurs sont fausses")</script>';
@@ -75,27 +93,20 @@ Détail : Va ajouter les postes de l'utilisateur dans la page home. Le poste con
 
     </header>
     <main>
-        <input type="hidden" name="MAX_FILE_SIZE" value="300000">
-        <label for="imgPost">Images</label>
-        <input type="file" name="imgPost" id="imgPost"> <br>
-        <textarea name="description" id="description" cols="30" rows="10"></textarea>
-        <input type="submit" name="poster" value="Poster">
+        <form action="#" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="MAX_FILE_SIZE" value="300000">
+            <label for="imgPost">Images</label><br>
+            <input type="file" name="imgPost" id="imgPost" multiple> <br>
+            <textarea name="description" id="description" cols="30" rows="10"></textarea><br>
+            <input type="submit" name="poster" value="Poster">
+        </form>
         <?php
 
 
-        // On va afficher après le formulaire les images de l'utilisateur
-        $imgs = LoadUserEnc64Images();
-        foreach ($imgs as $img) {
-            echo '';
-            echo $img->nomFichierMedia;
-            echo '';
-            // On affiche directement dans l’attribut src d’un tag 
-            echo '';
-            echo '';
-        }
 
 
         ?>
+        </form>
     </main>
     <footer></footer>
 </body>
