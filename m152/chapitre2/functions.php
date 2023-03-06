@@ -42,10 +42,9 @@ function getAllPosts()
 {
     $arr = array();
 
-    $sql = "SELECT `post`.`idPost`, `post`.`description`, `post`.`dateCreation`, `post`.`idMedia`
+    $sql = "SELECT `post`.`idPost`, `media`.`nomFichierMedia` AS `nomImage`, `post`.`description`, `post`.`dateCreation`, `post`.`idMedia`
     FROM `portfolio_img`.`post`
-	JOIN `media` USING(idPost)
-	JOIN `type` USING(idType)";
+	JOIN `media` ON post.idMedia = media.idMedia";
     $statement = EDatabase::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
     try {
         $statement->execute();
@@ -72,29 +71,66 @@ function getAllPosts()
 }
 
 
-/** 
- * Intègre le poste dans la base de donnée
- * @param string $nom nom du budget
- * @param int $montant montant du budget
+
+
+
+/**
+ * 
  */
 function addPost($description, $dateCreation)
 {
-
-    $sql = "INSERT INTO `portfolio_img`.`post` (`description`,`dateCreation`) 
-	VALUES(:d,:dm)";
-    //$sqlMedia = "INSERT INTO `portfolio_img`.`media` (`idPost`,`idMedia`) VALUES(:ip,:m)";
+    $sql = "INSERT INTO `portfolio_img`.`post` (`description`,`dateCreation`) VALUES(:d,:dm)";
     $statement = EDatabase::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
-    //$statMedia = EDatabase::prepare($sqlMedia, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 
     try {
-        $statement->execute(array(
-            ":d" => $description, ":dm" => $dateCreation
-        ));
-        //$statMedia->execute(array(":ip" => $idPost, ":m" => $idMedia));
+        $statement->execute(array(":d" => $description, ":dm" => $dateCreation));
     } catch (PDOException $e) {
         return false;
     }
-    // Fini
+    return EDatabase::lastInsertId();
+}
+
+/**
+ * Fonction pour ajouter l'image à l'aide du idPost
+ * @param int $idPost identifiant du post
+ * @param
+ */
+function addMedia2Post($idPost, $nomFichierMedia, $image, $InMimeType)
+{
+    EDatabase::beginTransaction();
+
+    $sql = "INSERT INTO `portfolio_img`.`media` (`nomFichierMedia`,`encodeImage`) VALUES(:n, :e)";
+    $statement = EDatabase::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+    // Préparer la chaîne qui permet d'afficher directement l'image dans un tag img
+    $SrcEnc64 = 'data:' . $InMimeType . ';base64,' . base64_encode($image);
+
+    try {
+        $statement->execute(array(":n" => $nomFichierMedia, ":e" => $SrcEnc64));
+    } catch (PDOException $e) {
+        EDatabase::rollBack();
+        return false;
+    }
+    $idMedia = EDatabase::lastInsertId();
+    if (addPostHasMedia($idPost, $idMedia) == false)
+    {
+        EDatabase::rollBack();
+        return false;
+    }
+    EDatabase::commit();
+    return true;
+}
+
+
+function addPostHasMedia($idPost, $idMedia)
+{
+    $sql = "INSERT INTO `portfolio_img`.`post_has_media` (`post_idPost`, `media_idMedia`) VALUES (:p, :m)";
+    $statement = EDatabase::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+
+    try {
+        $statement->execute(array(":p" => $idPost, ":m" => $idMedia));
+    } catch (PDOException $e) {
+        return false;
+    }
     return true;
 }
 
@@ -116,33 +152,6 @@ function deletePost($idPost)
     return true;
 }
 
-/**
- * Sauvegarder une image pour un utilisateur donné sous forme encodée 64bits
- * @param string $image L'image que l'utilisateur à ajouter
- * @param string $InMimeType Le type mime du fichier à sauvegarder
- * @param string $nomFichierMedia Le nom original du fichier
- * @return bool True si correctement sauvegardé, autrement False si une erreur est survenue
- * 
- * @remark Les images sont stockées directement dans un enregistrement de la base de données sous forme encodée 64bits
- */
-function SaveUserEnc64Image($nomFichierMedia, $image, $InMimeType)
-{
-    // Insérer le contenu directement dans l'enregistrement de la base de données
-    $sql = "INSERT INTO `portfolio_img`.`media` (`nomFichierMedia`,`encodeImage`) VALUES(:n, :e)";
-    $statement = EDatabase::prepare($sql);
-    // Préparer la chaîne qui permet d'afficher directement l'image dans un tag img
-    $SrcEnc64 = 'data:' . $InMimeType . ';base64,' . base64_encode($image);
-
-    try {
-        $statement->execute(array(':n' => $nomFichierMedia, ':e' => $SrcEnc64));
-    } catch (PDOException $e) {
-        echo 'Problème écriture dans la base de données: ' . $e->getMessage();
-        // fail
-        return false;
-    }
-    // Done
-    return true;
-}
 
 
 /**

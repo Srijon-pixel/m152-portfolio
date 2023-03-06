@@ -12,7 +12,7 @@ class EPost
      * @param string $InNom le nom du budget
      * @param integer $InMontant le montant du budget
      */
-    public function __construct($InIdPost, $InDescription = "", $InDateCreation = "", $InDateModification = "", $InIdMedia)
+    public function __construct($InIdPost, $InDescription, $InDateCreation, $InDateModification, $InIdMedia)
     {
 
         $this->idPost = $InIdPost;

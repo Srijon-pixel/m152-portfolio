@@ -38,22 +38,9 @@ Détail : Va ajouter les postes de l'utilisateur qui seront affichés dans la pa
             $colDescription = COL_ERROR;
         }
 
-        /* $total = count($_FILES['imgPost']['name']);
-        for ($i = 0; $i < $total; $i++) {
 
-            //Récupère le chemin du fichier
-            $tmpFilePath = $_FILES['imgPost']['tmp_name'][$i];
-
-            //Vérifie si on un chemin
-            if ($tmpFilePath != "") {
-                //Remplace le chemin par le nouveau
-                $newFilePath = "./img/" . $_FILES['imgPost']['name'][$i];
-
-                //Envoie le fichier dans un dossier temporaire
-                if (move_uploaded_file($tmpFilePath, $newFilePath)) {
-*/
         if (isset($_FILES['imgPost']) && is_uploaded_file($_FILES['imgPost']['tmp_name'])) {
-            if (!SaveUserEnc64Image($_FILES['imgPost']['name'], file_get_contents($_FILES['imgPost']['tmp_name']), $_FILES['imgPost']['type'])) {
+            if (!addMedia2Post($idPost, $_FILES['imgPost']['name'], file_get_contents($_FILES['imgPost']['tmp_name']), $_FILES['imgPost']['type'])) {
                 echo ('Problème pour insérer une image dans la base');
                 $colImg = COL_ERROR;
             }
@@ -62,22 +49,18 @@ Détail : Va ajouter les postes de l'utilisateur qui seront affichés dans la pa
             $colImg = COL_ERROR;
         }
 
-        /*}
-            }
-        }*/
-
-
-
-
         if ($colDescription != COL_ERROR && $colImg != COL_ERROR) {
             if (addPost($description, $dateCreation)) {
-                header('Location: index.php');
-                exit;
+                if (addPostHasMedia($idPost, $idMedia)) {
+                    header('Location: index.php');
+                    exit;
+                }
             }
         } else {
             echo '<script>alert("Pas possible il vous manque des valeurs ou des valeurs sont fausses")</script>';
         }
     }
+
     ?>
     <header>
 
