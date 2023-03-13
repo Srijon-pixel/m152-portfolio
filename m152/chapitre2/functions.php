@@ -97,7 +97,7 @@ function addMedia2Post($idPost, $nomFichierMedia, $image, $InMimeType)
 {
     EDatabase::beginTransaction();
 
-    $sql = "INSERT INTO `portfolio_img`.`media` (`nomFichierMedia`,`encodeImage`) VALUES(:n, :e)";
+    $sql = "INSERT INTO `portfolio_img`.`media` (`nomFichierMedia`,`encode`) VALUES(:n, :e)";
     $statement = EDatabase::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
     // Préparer la chaîne qui permet d'afficher directement l'image dans un tag img
     $SrcEnc64 = 'data:' . $InMimeType . ';base64,' . base64_encode($image);
@@ -117,6 +117,8 @@ function addMedia2Post($idPost, $nomFichierMedia, $image, $InMimeType)
     EDatabase::commit();
     return true;
 }
+
+
 
 
 function addPostHasMedia($idPost, $idMedia)
@@ -166,8 +168,8 @@ function getPostWithMedia()
     // On crée un tableau qui va contenir les objets EMedia
     $arr = array();
 
-    $s = "SELECT  `media`.`idMedia`, `media`.`nomFichierMedia`, `media`.`encodeImage` FROM `portfolio_img`.`media` ";
-    $statement = EDatabase::prepare($s, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+    $sql = "SELECT  `media`.`idMedia`, `media`.`nomFichierMedia`, `media`.`encode` FROM `portfolio_img`.`media` ";
+    $statement = EDatabase::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
     try {
         $statement->execute();
     } catch (PDOException $e) {
@@ -180,7 +182,7 @@ function getPostWithMedia()
         $img = new EMedia(
             intval($row['idMedia']),
             $row['nomFichierMedia'],
-            $row['encodeImage']
+            $row['encode']
         );
         // On place l'objet EMedia créé dans le tableau
         array_push($arr, $img);

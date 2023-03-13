@@ -64,9 +64,8 @@ Détail : Va ajouter les postes de l'utilisateur qui seront affichés dans la pa
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container-fluid">
                 <ul class="navbar-nav">
-                    <li class="nav-item"><a class="nav-link active" href="./index.php">Home</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="#">Post</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="#">Login</a></li>
+                    <li class="nav-item"><a class="nav-link " href="./index.php">Home</a></li>
+                    <li class="nav-item"><a class="nav-link " href="#">Post</a></li>
                 </ul>
             </div>
         </nav>

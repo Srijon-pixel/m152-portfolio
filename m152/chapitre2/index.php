@@ -50,17 +50,18 @@ Détail : Page d'accueil du site
     define('DELETE_BUTTON', "Supprimer");
     define('UPDATE_BUTTON', "Modifier");
 
-
+    $idDelete = -1;
+    $idModify = -1;
     if (isset($_POST['DEL'])) {
         $idDelete = filter_input(INPUT_POST, "poste");
         $idDelete = intval($idDelete);
     }
-   
+
 
     if ($idDelete > 0) {
         if (deletePostWithMedia($idDelete) == false) {
             echo "Le produit ne peut pas être supprimé. Une erreur s'est produite.";
-        }else{
+        } else {
             header('Location: index.php');
         }
     }
@@ -77,8 +78,7 @@ Détail : Page d'accueil du site
             <div class="container-fluid">
                 <ul class="navbar-nav">
                     <li class="nav-item" class="bi bi-house"><a class="nav-link active" href="#">Home</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="./poste.php">Post</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="#">Login</a></li>
+                    <li class="nav-item"><a class="nav-link" href="./poste.php">Post</a></li>
                 </ul>
             </div>
         </nav>
@@ -98,7 +98,7 @@ Détail : Page d'accueil du site
         $imgs = getPostWithMedia();
         foreach ($imgs as $img) {
             echo "<div class=\"card\">";
-            echo '<img src="'.$img->encodeImage.'">';
+            echo '<img src="' . $img->encode . '">';
             echo '<form action="" method="post"><input type="hidden" name="poste" value="' . $img->idMedia . '">';
             echo '<input type="submit" name="DEL" value="' . DELETE_BUTTON . '"><input type="submit" name="UPD" value="' . UPDATE_BUTTON . '"></form>';
             echo '</div>';
