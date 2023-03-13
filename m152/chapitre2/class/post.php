@@ -12,14 +12,12 @@ class EPost
      * @param string $InNom le nom du budget
      * @param integer $InMontant le montant du budget
      */
-    public function __construct($InIdPost, $InDescription, $InDateCreation, $InDateModification, $InIdMedia)
+    public function __construct($InIdPost, $InDescription, $InDateCreation)
     {
 
         $this->idPost = $InIdPost;
         $this->description = $InDescription;
         $this->dateCreation = $InDateCreation;
-        $this->dateModification = $InDateModification;
-        $this->idMedia = $InIdMedia;
     }
 
 
@@ -36,12 +34,7 @@ class EPost
      * @var string date de création du poste
      */
     public $dateCreation;
-    /**
-     * @var string date de modification du poste
-     */
-    public $dateModification;
-    /**
-     * @var int identifiant du média
-     */
-    public $idMedia;
+ 
+    
 }
+?>

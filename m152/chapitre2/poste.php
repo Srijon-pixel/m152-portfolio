@@ -22,7 +22,7 @@ Détail : Va ajouter les postes de l'utilisateur qui seront affichés dans la pa
 
     const COL_ERROR = "red";
 
-    $img = array();
+  
     $description = "";
 
 
@@ -39,20 +39,17 @@ Détail : Va ajouter les postes de l'utilisateur qui seront affichés dans la pa
         }
 
 
-        if (isset($_FILES['imgPost']) && is_uploaded_file($_FILES['imgPost']['tmp_name'])) {
-            if (!addMedia2Post($idPost, $_FILES['imgPost']['name'], file_get_contents($_FILES['imgPost']['tmp_name']), $_FILES['imgPost']['type'])) {
-                echo ('Problème pour insérer une image dans la base');
-                $colImg = COL_ERROR;
-            }
-        } else {
+        if (isset($_FILES['imgPost']) && !is_uploaded_file($_FILES['imgPost']['tmp_name'])) {
             echo ('Problème de transfert');
             $colImg = COL_ERROR;
         }
 
         if ($colDescription != COL_ERROR && $colImg != COL_ERROR) {
-            if (addPost($description, $dateCreation)) {
-                if (addPostHasMedia($idPost, $idMedia)) {
-                    header('Location: index.php');
+            $idPost = addPost($description, $dateCreation);
+            if ($idPost !== false) {
+              
+                if (!addMedia2Post($idPost, $_FILES['imgPost']['name'], file_get_contents($_FILES['imgPost']['tmp_name']), $_FILES['imgPost']['type'])) {
+                            header('Location: index.php');
                     exit;
                 }
             }
@@ -78,9 +75,10 @@ Détail : Va ajouter les postes de l'utilisateur qui seront affichés dans la pa
     <main>
         <form action="#" method="post" enctype="multipart/form-data">
             <input type="hidden" name="MAX_FILE_SIZE" value="300000">
-            <label for="imgPost">Images</label><br>
+            <label for="imgPost" style="color:<?php echo $colImg; ?>">Images</label><br>
             <input type="file" name="imgPost" id="imgPost" multiple> <br>
-            <textarea name="description" id="description" cols="30" rows="10"></textarea><br>
+            <label for="description" style="color:<?php echo $colDescription; ?>">Description</label><br>
+            <textarea name="description" id="description" cols="30" rows="10" value="<?php echo $description; ?>"></textarea><br>
             <input type="submit" name="poster" value="Poster">
         </form>
         <?php

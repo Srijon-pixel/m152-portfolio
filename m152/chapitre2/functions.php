@@ -58,9 +58,7 @@ function getAllPosts()
         $c = new EPost(
             intval($row['idPost']),
             $row['description'],
-            $row['dateCreation'],
-            $row['dateModification'],
-            $row['idMedia']
+            $row['dateCreation']
         );
         // On place l'objet EPost créé dans le tableau
         array_push($arr, $c);
@@ -139,7 +137,7 @@ function addPostHasMedia($idPost, $idMedia)
  * Supprime définitivement le poste de la base de donnée 
  * @param int $idPost identifiant unique du post
  */
-function deletePost($idPost)
+function deletePostwithMedia($idPost)
 {
     $sql = "DELETE FROM `portfolio_img`.`post` WHERE `post`.`idPost` = :i";
     $statement = EDatabase::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
@@ -154,13 +152,16 @@ function deletePost($idPost)
 
 
 
+
+
+
 /**
  * Récupère toutes les images de l'utilisateur de la base de données
  * @return array Un tableau d'objet EMedia. False si une erreur est survenue
  * 
  * @remark Les images sont stockées directement dans un enregistrement de la base de données sous forme encodée 64bits
  */
-function LoadUserEnc64Images()
+function getPostWithMedia()
 {
     // On crée un tableau qui va contenir les objets EMedia
     $arr = array();
@@ -170,7 +171,6 @@ function LoadUserEnc64Images()
     try {
         $statement->execute();
     } catch (PDOException $e) {
-        echo 'Problème de lecture de la base de données: ' . $e->getMessage();
         return false;
     }
     // On parcoure les enregistrements 
