@@ -83,7 +83,6 @@ Détail : Page d'accueil du site
                 echo '<audio src="' . $media->encode . '" controls></audio>';
 
             }
-            echo '<img src="' . $media->description . '">';
             echo '<form action="" method="post"><input type="hidden" name="poste" value="' . $media->idMedia . '">';
             echo '<input type="submit" name="DEL" value="' . DELETE_BUTTON . '"><input type="submit" name="UPD" value="' . UPDATE_BUTTON . '"></form>';
             echo '</div>';

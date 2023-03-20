@@ -178,7 +178,7 @@ JOIN media m ON pm.media_idMedia = m.idMedia;*/
  * 
  * @remark Les images sont stockées directement dans un enregistrement de la base de données sous forme encodée 64bits
  */
-function getPostWithMedia()
+/*function getPostWithMedia()
 {
     // On crée un tableau qui va contenir les objets EPost
     $arr = array();
@@ -216,5 +216,41 @@ function getPostWithMedia()
         array_push($arr, $post);
     }
     // On retourne le tableau contenant la définition des posts sous forme EPost
+    return $arr;
+}*/
+
+/**
+ * Récupère toutes les images de l'utilisateur de la base de données
+ * @return array Un tableau d'objet EMedia. False si une erreur est survenue
+ * 
+ * @remark Les images sont stockées directement dans un enregistrement de la base de données sous forme encodée 64bits
+ */
+function getPostWithMedia()
+{
+    $arr = array();
+
+    $sql = "SELECT `media`.`idMedia`, `media`.`nomFichierMedia`, `media`.`encode`, `media`.`typeMedia`
+    FROM `portfolio_img`.`media`;";
+    $statement = EDatabase::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+    try {
+        $statement->execute();
+    } catch (PDOException $e) {
+        return false;
+    }
+    // On parcoure les enregistrements 
+    while ($row = $statement->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) {
+        // On crée l'objet EMedia en l'initialisant avec les données provenant
+        // de la base de données
+        $c = new EMedia(
+            intval($row['idMedia']),
+            $row['nomFichierMedia'],
+            $row['encode'],
+            $row['typeMedia']
+        );
+        // On place l'objet EMedia créé dans le tableau
+        array_push($arr, $c);
+    }
+
+    // Fini
     return $arr;
 }

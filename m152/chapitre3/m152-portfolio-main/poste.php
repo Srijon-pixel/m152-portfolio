@@ -48,7 +48,7 @@ Détail : Va ajouter les postes de l'utilisateur qui seront affichés dans la pa
             $idPost = addPost($description, $dateCreation);
             if ($idPost !== false) {
               
-                if (!addMedia2Post($idPost, $_FILES['imgPost']['name'], file_get_contents($_FILES['imgPost']['tmp_name']), $_FILES['imgPost']['type'])) {
+                if (addMedia2Post($idPost, $_FILES['imgPost']['name'], file_get_contents($_FILES['imgPost']['tmp_name']), $_FILES['imgPost']['type'])) {
                             header('Location: index.php');
                     exit;
                 }
@@ -66,7 +66,6 @@ Détail : Va ajouter les postes de l'utilisateur qui seront affichés dans la pa
                 <ul class="navbar-nav">
                     <li class="nav-item"><a class="nav-link" href="./index.php">Home</a></li>
                     <li class="nav-item"><a class="nav-link active" href="#">Post</a></li>
-                    <li class="nav-item"><a class="nav-link " href="#">Login</a></li>
                 </ul>
             </div>
         </nav>
