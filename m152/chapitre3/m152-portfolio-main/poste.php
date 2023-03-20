@@ -22,7 +22,7 @@ Détail : Va ajouter les postes de l'utilisateur qui seront affichés dans la pa
 
     const COL_ERROR = "red";
 
-  
+   
     $description = "";
 
 
@@ -39,7 +39,7 @@ Détail : Va ajouter les postes de l'utilisateur qui seront affichés dans la pa
         }
 
 
-        if (isset($_FILES['imgPost']) && !is_uploaded_file($_FILES['imgPost']['tmp_name'])) {
+        if (isset($_FILES['mediaPost']) && !is_uploaded_file($_FILES['mediaPost']['tmp_name'])) {
             echo ('Problème de transfert');
             $colImg = COL_ERROR;
         }
@@ -48,7 +48,7 @@ Détail : Va ajouter les postes de l'utilisateur qui seront affichés dans la pa
             $idPost = addPost($description, $dateCreation);
             if ($idPost !== false) {
               
-                if (addMedia2Post($idPost, $_FILES['imgPost']['name'], file_get_contents($_FILES['imgPost']['tmp_name']), $_FILES['imgPost']['type'])) {
+                if (addMedia2Post($idPost, $_FILES['mediaPost']['name'], file_get_contents($_FILES['mediaPost']['tmp_name']), $_FILES['mediaPost']['type'])) {
                             header('Location: index.php');
                     exit;
                 }
@@ -73,9 +73,9 @@ Détail : Va ajouter les postes de l'utilisateur qui seront affichés dans la pa
     </header>
     <main>
         <form action="#" method="post" enctype="multipart/form-data">
-            <!--input type="hidden" name="MAX_FILE_SIZE" value="300000"-->
-            <label for="imgPost">Images</label><br>
-            <input type="file" name="imgPost" id="imgPost" multiple> <br>
+            <input type="hidden" name="MAX_FILE_SIZE" value="300000000000">
+            <label for="mediaPost">Images</label><br>
+            <input type="file" name="mediaPost" id="mediaPost" multiple> <br>
             <label for="description" style="color:<?php echo $colDescription; ?>">Description</label><br>
             <textarea name="description" id="description" cols="30" rows="10" value="<?php echo $description; ?>"></textarea><br>
             <input type="submit" name="poster" value="Poster">

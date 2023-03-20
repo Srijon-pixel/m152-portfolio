@@ -73,11 +73,11 @@ function getAllPosts()
 
 
 /**
-*Fonction pour ajouter un nouveau post dans la base de données
-*@param string $description description du post
-*@param string $dateCreation date de création du post au format YYYY-MM-DD
-*@return int|false identifiant du post ajouté ou false en cas d'erreur
-*/
+ *Fonction pour ajouter un nouveau post dans la base de données
+ *@param string $description description du post
+ *@param string $dateCreation date de création du post au format YYYY-MM-DD
+ *@return int|false identifiant du post ajouté ou false en cas d'erreur
+ */
 function addPost($description, $dateCreation)
 {
     // Préparation de la requête SQL
@@ -153,12 +153,12 @@ function addPostHasMedia($idPost, $idMedia)
  * Supprime définitivement le poste de la base de donnée 
  * @param int $idPost identifiant unique du post
  */
-function deletePostwithMedia($idPost)
+function deletePostwithMedia($idMedia)
 {
-    $sql = "DELETE FROM `portfolio_img`.`post` WHERE `post`.`idPost` = :i";
+    $sql = "DELETE FROM `portfolio_img`.`media` WHERE `media`.`idMedia` = :i";
     $statement = EDatabase::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
     try {
-        $statement->execute(array(":i" => $idPost));
+        $statement->execute(array(":i" => $idMedia));
     } catch (PDOException $e) {
         return false;
     }
@@ -178,7 +178,7 @@ JOIN media m ON pm.media_idMedia = m.idMedia;*/
  * 
  * @remark Les images sont stockées directement dans un enregistrement de la base de données sous forme encodée 64bits
  */
-/*function getPostWithMedia()
+function getPostWithMedia()
 {
     // On crée un tableau qui va contenir les objets EPost
     $arr = array();
@@ -217,7 +217,7 @@ JOIN media m ON pm.media_idMedia = m.idMedia;*/
     }
     // On retourne le tableau contenant la définition des posts sous forme EPost
     return $arr;
-}*/
+}
 
 /**
  * Récupère toutes les images de l'utilisateur de la base de données
@@ -225,7 +225,7 @@ JOIN media m ON pm.media_idMedia = m.idMedia;*/
  * 
  * @remark Les images sont stockées directement dans un enregistrement de la base de données sous forme encodée 64bits
  */
-function getPostWithMedia()
+/*function getPostWithMedia()
 {
     $arr = array();
 
@@ -253,4 +253,4 @@ function getPostWithMedia()
 
     // Fini
     return $arr;
-}
+}*/

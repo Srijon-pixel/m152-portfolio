@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <!--
-Projet : Créer un portfolio
+Projet : Créer un portfolio où l'utilisateur pourra poster des message avec un fichier, image, audio et vidéo
 Auteur : Srijon Rahman
 Date : 23.01.23
 Détail : Va ajouter les postes de l'utilisateur qui seront affichés dans la page home. Le poste contiendra une image et une description
@@ -39,7 +39,7 @@ Détail : Va ajouter les postes de l'utilisateur qui seront affichés dans la pa
         }
 
 
-        if (isset($_FILES['imgPost']) && !is_uploaded_file($_FILES['imgPost']['tmp_name'])) {
+        if (isset($_FILES['mediaPost']) && !is_uploaded_file($_FILES['mediaPost']['tmp_name'])) {
             echo ('Problème de transfert');
             $colImg = COL_ERROR;
         }
@@ -48,7 +48,7 @@ Détail : Va ajouter les postes de l'utilisateur qui seront affichés dans la pa
             $idPost = addPost($description, $dateCreation);
             if ($idPost !== false) {
               
-                if (!addMedia2Post($idPost, $_FILES['imgPost']['name'], file_get_contents($_FILES['imgPost']['tmp_name']), $_FILES['imgPost']['type'])) {
+                if (addMedia2Post($idPost, $_FILES['mediaPost']['name'], file_get_contents($_FILES['mediaPost']['tmp_name']), $_FILES['mediaPost']['type'])) {
                             header('Location: index.php');
                     exit;
                 }
@@ -74,7 +74,7 @@ Détail : Va ajouter les postes de l'utilisateur qui seront affichés dans la pa
     <main>
         <form action="#" method="post" enctype="multipart/form-data">
             <input type="hidden" name="MAX_FILE_SIZE" value="300000">
-            <label for="imgPost" style="color:<?php echo $colImg; ?>">Images</label><br>
+            <label for="mediaPost" style="color:<?php echo $colImg; ?>">Images</label><br>
             <input type="file" name="imgPost" id="imgPost" multiple> <br>
             <label for="description" style="color:<?php echo $colDescription; ?>">Description</label><br>
             <textarea name="description" id="description" cols="30" rows="10" value="<?php echo $description; ?>"></textarea><br>

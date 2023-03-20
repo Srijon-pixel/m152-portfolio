@@ -19,7 +19,6 @@ Détail : Page d'accueil du site
 
 <body>
     <?php
-    session_start(); // ouverture de la session
     require_once './functions.php'; // récuperation de toute les fonctions
     define('DELETE_BUTTON', "Supprimer");
     define('UPDATE_BUTTON', "Modifier");
@@ -63,7 +62,7 @@ Détail : Page d'accueil du site
     <main>
         <div class="card">
             <img src="./img/photo_profil.jpg" alt="photo">
-            <img src="./img/edit.png" alt="éditer">
+            
             <div class="container">
                 <p>Nom : Srijon Rahman</p>
                 <p>Passion : Jouer aux jeux vidéo</p>
@@ -73,17 +72,20 @@ Détail : Page d'accueil du site
         $medias = getPostWithMedia();
         foreach ($medias as $media) {
             echo "<div class=\"card\">";
-            if(preg_match('/^video/i', $media->typeMedia)){
-                echo '<video src="' . $media->encode . '" controls></video>';
+            if(preg_match('/^video/i', $media->post->typeMedia)){
+                echo '<video src="' . $media->post->encode . '" controls></video>';
 
-            }else if (preg_match('/^image/i', $media->typeMedia)) {
-                echo '<img src="' . $media->encode . '">';
+            }else if (preg_match('/^image/i', $media->post->typeMedia)) {
+                echo '<img src="' . $media->post->encode . '">';
 
-            }else if (preg_match('/^audio/i', $media->typeMedia)) {
-                echo '<audio src="' . $media->encode . '" controls></audio>';
+            }else if (preg_match('/^audio/i', $media->post->typeMedia)) {
+                echo '<audio src="' . $media->post->encode . '" controls></audio>';
 
+            }else {
+                echo '';
             }
-            echo '<form action="" method="post"><input type="hidden" name="poste" value="' . $media->idMedia . '">';
+            echo $media->description;
+            echo '<form action="" method="post"><input type="hidden" name="poste" value="' . $media->post->idMedia . '">';
             echo '<input type="submit" name="DEL" value="' . DELETE_BUTTON . '"><input type="submit" name="UPD" value="' . UPDATE_BUTTON . '"></form>';
             echo '</div>';
         }
